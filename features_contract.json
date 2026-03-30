@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "description": "Contrat de features entre Maryem (extraction) et Lina (ML)",
+  "features": [
+    {"id": 1,  "name": "subject_length",         "type": "int",   "range": [0, null],  "group": "textuel",     "extractor": "Maryem"},
+    {"id": 2,  "name": "body_length",             "type": "int",   "range": [0, null],  "group": "textuel",     "extractor": "Maryem"},
+    {"id": 3,  "name": "word_count",              "type": "int",   "range": [0, null],  "group": "textuel",     "extractor": "Maryem"},
+    {"id": 4,  "name": "urgency_score",           "type": "float", "range": [0, 1],     "group": "textuel",     "extractor": "Maryem"},
+    {"id": 5,  "name": "caps_ratio",              "type": "float", "range": [0, 1],     "group": "textuel",     "extractor": "Maryem"},
+    {"id": 6,  "name": "exclamation_count",       "type": "int",   "range": [0, null],  "group": "textuel",     "extractor": "Maryem"},
+    {"id": 7,  "name": "question_count",          "type": "int",   "range": [0, null],  "group": "textuel",     "extractor": "Maryem"},
+    {"id": 8,  "name": "html_tags_count",         "type": "int",   "range": [0, null],  "group": "textuel",     "extractor": "Maryem"},
+    {"id": 9,  "name": "tfidf_5000",              "type": "float[]","range": [0, 1],    "group": "textuel",     "extractor": "Maryem"},
+    {"id": 10, "name": "url_count",               "type": "int",   "range": [0, null],  "group": "url",         "extractor": "Maryem"},
+    {"id": 11, "name": "url_length_avg",          "type": "float", "range": [0, null],  "group": "url",         "extractor": "Maryem"},
+    {"id": 12, "name": "has_ip_in_url",           "type": "int",   "range": [0, 1],     "group": "url",         "extractor": "Maryem"},
+    {"id": 13, "name": "url_obfuscated",          "type": "int",   "range": [0, 1],     "group": "url",         "extractor": "Maryem"},
+    {"id": 14, "name": "subdomain_count",         "type": "int",   "range": [0, null],  "group": "url",         "extractor": "Maryem"},
+    {"id": 15, "name": "suspicious_url_keywords", "type": "int",   "range": [0, null],  "group": "url",         "extractor": "Maryem"},
+    {"id": 16, "name": "url_has_https",           "type": "int",   "range": [0, 1],     "group": "url",         "extractor": "Maryem"},
+    {"id": 17, "name": "sender_domain",           "type": "string","range": null,       "group": "expediteur",  "extractor": "Maryem"},
+    {"id": 18, "name": "sender_domain_length",    "type": "int",   "range": [0, null],  "group": "expediteur",  "extractor": "Maryem"},
+    {"id": 19, "name": "sender_has_numbers",      "type": "int",   "range": [0, 1],     "group": "expediteur",  "extractor": "Maryem"},
+    {"id": 20, "name": "sender_domain_suspicious","type": "int",   "range": [0, 1],     "group": "expediteur",  "extractor": "Maryem"},
+    {"id": 21, "name": "display_name_mismatch",   "type": "int",   "range": [0, 1],     "group": "expediteur",  "extractor": "Maryem"},
+    {"id": 22, "name": "spf_valid",               "type": "int",   "range": [0, 1],     "group": "reseau",      "extractor": "Maryem"},
+    {"id": 23, "name": "dkim_valid",              "type": "int",   "range": [0, 1],     "group": "reseau",      "extractor": "Maryem"},
+    {"id": 24, "name": "dmarc_valid",             "type": "int",   "range": [0, 1],     "group": "reseau",      "extractor": "Maryem"},
+    {"id": 25, "name": "domain_age_days",         "type": "int",   "range": [0, null],  "group": "reseau",      "extractor": "Maryem"},
+    {"id": 26, "name": "ssl_valid",               "type": "int",   "range": [0, 1],     "group": "reseau",      "extractor": "Maryem"},
+    {"id": 27, "name": "in_blacklist",            "type": "int",   "range": [0, 1],     "group": "reseau",      "extractor": "Maryem"},
+    {"id": 28, "name": "sender_ip_reputation",    "type": "int",   "range": [0, 1],     "group": "reseau",      "extractor": "Maryem"}
+  ],
+  "label": {
+    "name": "is_phishing",
+    "type": "int",
+    "values": [0, 1],
+    "description": "0 = email légitime, 1 = phishing"
+  }
+}

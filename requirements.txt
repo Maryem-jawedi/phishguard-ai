@@ -1,0 +1,25 @@
+# Email parsing
+dnspython
+python-whois
+
+# URL analysis
+tldextract
+requests
+
+# NLP
+spacy
+
+# ML (pour Lina - ne pas toucher)
+scikit-learn
+xgboost
+shap
+
+# API
+fastapi
+uvicorn
+
+# Interface
+gradio
+
+# Tests
+pytest

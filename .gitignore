@@ -8,3 +8,7 @@ __pycache__/
 *.pkl
 *.h5
 venv/
+CEAS_08.csv 
+CEAS_08.csv 
+modeles_sauvegardes/ 
+*.pkl 

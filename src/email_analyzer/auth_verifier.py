@@ -1,3 +1,4 @@
+import re
 import dns.resolver
 import ssl
 import socket
@@ -11,15 +12,15 @@ SUSPICIOUS_DOMAIN_KEYWORDS = [
 ]
 
 
-def verify_auth(sender_email: str, domain: str) -> dict:
+def verify_auth(sender_email: str, domain: str, headers: dict = None) -> dict:
     return {
-        "spf_valid":             check_spf(domain),
-        "dkim_valid":            check_dkim(domain),
-        "dmarc_valid":           check_dmarc(domain),
-        "domain_age_days":       get_domain_age(domain),
-        "ssl_valid":             check_ssl(domain),
-        "in_blacklist":          check_blacklist(domain),
-        "sender_ip_reputation":  check_ip_reputation(sender_email),
+        "spf_valid":            check_spf(domain),
+        "dkim_valid":           check_dkim(domain, headers),
+        "dmarc_valid":          check_dmarc(domain),
+        "domain_age_days":      get_domain_age(domain),
+        "ssl_valid":            check_ssl(domain),
+        "in_blacklist":         check_blacklist(domain),
+        "sender_ip_reputation": check_ip_reputation(sender_email),
     }
 
 
@@ -34,16 +35,35 @@ def check_spf(domain: str) -> int:
         return 0
 
 
-def check_dkim(domain: str) -> int:
-    try:
-        dkim_domain = f"default._domainkey.{domain}"
-        answers = dns.resolver.resolve(dkim_domain, "TXT")
-        for record in answers:
-            if "v=DKIM1" in str(record):
-                return 1
-        return 0
-    except Exception:
-        return 0
+def check_dkim(domain: str, headers: dict = None) -> int:
+    """
+    Extrait le vrai sélecteur DKIM depuis les headers de l'email si disponibles.
+    Tente ensuite plusieurs sélecteurs courants en fallback.
+    """
+    selectors_to_try = []
+
+    # 1. Extraire le sélecteur depuis le header DKIM-Signature
+    if headers:
+        dkim_header = headers.get("DKIM-Signature", "") or headers.get("dkim-signature", "")
+        if dkim_header:
+            match = re.search(r'\bs=([^;]+)', dkim_header)
+            if match:
+                selectors_to_try.append(match.group(1).strip())
+
+    # 2. Sélecteurs courants en fallback
+    selectors_to_try += ["default", "mail", "google", "selector1", "selector2", "k1", "dkim"]
+
+    for selector in selectors_to_try:
+        try:
+            dkim_domain = f"{selector}._domainkey.{domain}"
+            answers = dns.resolver.resolve(dkim_domain, "TXT")
+            for record in answers:
+                if "v=DKIM1" in str(record):
+                    return 1
+        except Exception:
+            continue
+
+    return 0
 
 
 def check_dmarc(domain: str) -> int:
@@ -85,9 +105,7 @@ def check_ssl(domain: str) -> int:
 
 def check_blacklist(domain: str) -> int:
     try:
-        api_url = f"https://safebrowsing.googleapis.com/v4/threatMatches:find"
         # placeholder — à connecter avec Google Safe Browsing API key
-        # pour l'instant retourne 0 par défaut
         return 0
     except Exception:
         return 0
@@ -98,7 +116,6 @@ def check_ip_reputation(sender_email: str) -> int:
         domain = sender_email.split("@")[-1]
         ip = socket.gethostbyname(domain)
         # placeholder — à connecter avec AbuseIPDB API key
-        # pour l'instant retourne 0 par défaut
         return 0
     except Exception:
-        return 0
+        return 0   # corrigé : était 0. (float)

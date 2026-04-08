@@ -1,5 +1,4 @@
 import re
-from collections import Counter
 
 URGENCY_WORDS = [
     "urgent", "immediately", "verify", "confirm", "click", "suspend",
@@ -13,14 +12,15 @@ SUSPICIOUS_HTML_TAGS = ["script", "iframe", "form", "input", "object"]
 
 def analyze_text(subject: str, body: str, html_content: str) -> dict:
     return {
-        "subject_length":   get_subject_length(subject),
-        "body_length":      get_body_length(body),
-        "word_count":       get_word_count(body),
-        "urgency_score":    get_urgency_score(body),
-        "caps_ratio":       get_caps_ratio(subject),
-        "exclamation_count":get_exclamation_count(body),
-        "question_count":   get_question_count(body),
-        "html_tags_count":  get_html_tags_count(html_content),
+        "subject_length":    get_subject_length(subject),
+        "body_length":       get_body_length(body),
+        "word_count":        get_word_count(body),
+        "urgency_score":     get_urgency_score(body),
+        "caps_ratio":        get_caps_ratio(subject),
+        "has_url":           get_has_url(body, html_content),   # AJOUT
+        "exclamation_count": get_exclamation_count(body),
+        "question_count":    get_question_count(body),
+        "html_tags_count":   get_html_tags_count(html_content),
     }
 
 
@@ -33,8 +33,7 @@ def get_body_length(body: str) -> int:
 
 
 def get_word_count(body: str) -> int:
-    words = body.split()
-    return len(words)
+    return len(body.split())
 
 
 def get_urgency_score(body: str) -> float:
@@ -51,6 +50,12 @@ def get_caps_ratio(subject: str) -> float:
         return 0.0
     caps = sum(1 for c in letters if c.isupper())
     return round(caps / len(letters), 4)
+
+
+def get_has_url(body: str, html_content: str) -> int:
+    """Détecte la présence d'au moins une URL dans le corps ou le HTML."""
+    combined = (body + " " + html_content).lower()
+    return int("http://" in combined or "https://" in combined)
 
 
 def get_exclamation_count(body: str) -> int:

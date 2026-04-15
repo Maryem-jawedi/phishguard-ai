@@ -3,7 +3,7 @@ from src.url_analyzer.structure_analyzer import analyze_structure
 from src.url_analyzer.reputation_checker import get_domain_reputation_score
 import tldextract
 
-
+TLDS_SUSPECTS = ['.ru', '.tk', '.ml', '.ga', '.cf', '.gq', '.xyz', '.top', '.pw', '.cc']
 def extract_url_features(urls: list[str]) -> dict:
     """
     Fonction principale — reçoit une liste d'URLs extraites de l'email
@@ -47,6 +47,9 @@ def extract_url_features(urls: list[str]) -> dict:
                                         sum(s["special_char_count"] for s in structures) / len(structures),
                                         4
                                     ),
+        "url_tld_suspect":          int(any(url.lower().endswith(t) or f"{t}/" in url.lower()
+                                        for url in urls for t in TLDS_SUSPECTS)
+                                    ),
     }
 
 
@@ -71,4 +74,5 @@ def _empty_url_features() -> dict:
         "has_redirect":             0,
         "avg_digit_ratio":          0.0,
         "avg_special_char_count":   0.0,
+        "url_tld_suspect":          0,
     }

@@ -112,4 +112,4 @@ def _detect_display_name_mismatch(sender_name: str, domain: str) -> int:
     for brand, legit_domain in KNOWN_BRANDS.items():
         if brand in name_lower and legit_domain not in domain:
             return 1
-    return 0
+    return 0.

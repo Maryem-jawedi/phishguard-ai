@@ -7,7 +7,7 @@ SUSPICIOUS_KEYWORDS = [
     "banking", "confirm", "password", "signin", "webscr"
 ]
 
-OBFUSCATION_PATTERNS = ["@", "//", "%20", "%40", "0x"]
+OBFUSCATION_PATTERNS = ["@", "%20", "%40", "0x"]
 
 
 def parse_url(url: str) -> dict:
@@ -47,7 +47,12 @@ def detect_ip_in_url(url: str) -> int:
 
 
 def detect_obfuscation(url: str) -> int:
-    for pattern in OBFUSCATION_PATTERNS:
+    # @ dans le chemin (pas dans le scheme) = vrai obfuscation
+    parsed = urlparse(url)
+    path_and_query = parsed.netloc + parsed.path + parsed.query
+    if "@" in path_and_query:
+        return 1
+    for pattern in ["%20", "%40", "0x"]:
         if pattern in url:
             return 1
     return 0

@@ -11,6 +11,9 @@ SUSPICIOUS_DOMAIN_KEYWORDS = [
     "banking", "paypal", "amazon", "apple", "microsoft"
 ]
 
+# Timeout global pour toutes les résolutions DNS (secondes)
+DNS_TIMEOUT = 3
+
 
 def verify_auth(sender_email: str, domain: str, headers: dict = None) -> dict:
     return {
@@ -24,9 +27,18 @@ def verify_auth(sender_email: str, domain: str, headers: dict = None) -> dict:
     }
 
 
+def _make_resolver() -> dns.resolver.Resolver:
+    """Crée un resolver DNS avec timeout court pour éviter les blocages."""
+    resolver = dns.resolver.Resolver()
+    resolver.lifetime = DNS_TIMEOUT
+    resolver.timeout  = DNS_TIMEOUT
+    return resolver
+
+
 def check_spf(domain: str) -> int:
     try:
-        answers = dns.resolver.resolve(domain, "TXT")
+        resolver = _make_resolver()
+        answers = resolver.resolve(domain, "TXT")
         for record in answers:
             if "v=spf1" in str(record):
                 return 1
@@ -37,12 +49,12 @@ def check_spf(domain: str) -> int:
 
 def check_dkim(domain: str, headers: dict = None) -> int:
     """
-    Extrait le vrai sélecteur DKIM depuis les headers de l'email si disponibles.
-    Tente ensuite plusieurs sélecteurs courants en fallback.
+    Extrait le vrai sélecteur DKIM depuis les headers si disponibles.
+    Limite à 4 sélecteurs courants en fallback pour éviter les timeouts.
     """
     selectors_to_try = []
 
-    # 1. Extraire le sélecteur depuis le header DKIM-Signature
+    # 1. Sélecteur extrait du header DKIM-Signature
     if headers:
         dkim_header = headers.get("DKIM-Signature", "") or headers.get("dkim-signature", "")
         if dkim_header:
@@ -50,13 +62,14 @@ def check_dkim(domain: str, headers: dict = None) -> int:
             if match:
                 selectors_to_try.append(match.group(1).strip())
 
-    # 2. Sélecteurs courants en fallback
-    selectors_to_try += ["default", "mail", "google", "selector1", "selector2", "k1", "dkim"]
+    # 2. Sélecteurs courants — limités à 4 pour rester sous 12s au total
+    selectors_to_try += ["default", "google", "selector1", "mail"]
 
     for selector in selectors_to_try:
         try:
+            resolver = _make_resolver()
             dkim_domain = f"{selector}._domainkey.{domain}"
-            answers = dns.resolver.resolve(dkim_domain, "TXT")
+            answers = resolver.resolve(dkim_domain, "TXT")
             for record in answers:
                 if "v=DKIM1" in str(record):
                     return 1
@@ -68,8 +81,9 @@ def check_dkim(domain: str, headers: dict = None) -> int:
 
 def check_dmarc(domain: str) -> int:
     try:
+        resolver = _make_resolver()
         dmarc_domain = f"_dmarc.{domain}"
-        answers = dns.resolver.resolve(dmarc_domain, "TXT")
+        answers = resolver.resolve(dmarc_domain, "TXT")
         for record in answers:
             if "v=DMARC1" in str(record):
                 return 1
@@ -80,6 +94,8 @@ def check_dmarc(domain: str) -> int:
 
 def get_domain_age(domain: str) -> int:
     try:
+        # Timeout whois via signal non disponible sur Windows
+        # On utilise un try/except avec un délai raisonnable
         w = whois.whois(domain)
         creation_date = w.creation_date
         if isinstance(creation_date, list):
@@ -95,7 +111,7 @@ def get_domain_age(domain: str) -> int:
 def check_ssl(domain: str) -> int:
     try:
         context = ssl.create_default_context()
-        with socket.create_connection((domain, 443), timeout=5) as sock:
+        with socket.create_connection((domain, 443), timeout=3) as sock:
             with context.wrap_socket(sock, server_hostname=domain) as ssock:
                 ssock.getpeercert()
                 return 1
@@ -105,7 +121,7 @@ def check_ssl(domain: str) -> int:
 
 def check_blacklist(domain: str) -> int:
     try:
-        # placeholder — à connecter avec Google Safe Browsing API key
+        # Placeholder — à connecter avec Google Safe Browsing API
         return 0
     except Exception:
         return 0
@@ -114,8 +130,10 @@ def check_blacklist(domain: str) -> int:
 def check_ip_reputation(sender_email: str) -> int:
     try:
         domain = sender_email.split("@")[-1]
+        socket.setdefaulttimeout(3)
         ip = socket.gethostbyname(domain)
-        # placeholder — à connecter avec AbuseIPDB API key
+        socket.setdefaulttimeout(None)
+        # Placeholder — à connecter avec AbuseIPDB
         return 0
     except Exception:
-        return 0   # corrigé : était 0. (float)
+        return 0

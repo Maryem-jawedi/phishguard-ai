@@ -10,15 +10,15 @@ MODELS_DIR = Path(__file__).parent.parent.parent / "modeles_sauvegardes"
 FEATURE_NAMES = [
     # Groupe 1 — texte (9 features)
     "subject_length", "body_length", "word_count",
-    "urgency_score", "caps_ratio", "has_url",           # has_url corrigé
+    "urgency_score", "caps_ratio", "has_url",
     "exclamation_count", "question_count", "html_tags_count",
     # Groupe 2 — URL (8 features)
     "url_count", "url_length_avg", "has_ip_in_url",
     "url_obfuscated", "subdomain_count", "suspicious_url_keywords",
-    "url_has_https", "url_tld_suspect",                 # url_tld_suspect corrigé
+    "url_has_https", "url_tld_suspect",
     # Groupe 3 — expéditeur (5 features)
     "sender_domain_length", "sender_has_numbers",
-    "sender_domain_suspicious", "sender_tld_suspect",   # sender_tld_suspect corrigé
+    "sender_domain_suspicious", "sender_tld_suspect",
     "display_name_mismatch",
 ]
 
@@ -34,7 +34,6 @@ NETWORK_RULES = [
 ]
 
 # Seuil de score cumulé pour bloquer au niveau 1
-# (évite les faux positifs sur un seul check DNS échoué)
 NETWORK_BLOCK_THRESHOLD = 0.75
 
 
@@ -50,10 +49,10 @@ class PhishingPredictor:
         Pipeline en cascade :
         Niveau 1 → vérification réseau (score cumulé)
         Niveau 2 → modèle SVM (si niveau 1 passe)
-        Niveau 3 → ajustement âge domaine
+        Niveau 3 → ajustements post-SVM (âge domaine + légitimité réseau)
         """
 
-        # ── NIVEAU 1 — Filtrage réseau ──────────────────────────────────
+        # ── NIVEAU 1 — Filtrage réseau ──────────────────────────────
         network_result = self._check_network_rules(features)
 
         if network_result["blocked"]:
@@ -68,7 +67,7 @@ class PhishingPredictor:
                 "network_flags" : self._network_flags(features),
             }
 
-        # ── NIVEAU 2 — Modèle SVM ───────────────────────────────────────
+        # ── NIVEAU 2 — Modèle SVM ───────────────────────────────────
         num_vector = np.array([
             features.get(f, 0) for f in FEATURE_NAMES
         ], dtype=float).reshape(1, -1)
@@ -81,16 +80,32 @@ class PhishingPredictor:
         decision_score = float(self.model.decision_function(X)[0])
         confidence     = round(100 / (1 + math.exp(-decision_score)), 2)
 
-        # ── NIVEAU 3 — Ajustement âge domaine ──────────────────────────
+        # ── NIVEAU 3 — Ajustements post-SVM ────────────────────────
         age = features.get("domain_age_days", -1)
         age_warning = None
 
+        # Ajustement à la hausse si domaine jeune
         if age != -1 and age < 7:
             confidence  = min(confidence + 20, 100)
             age_warning = f"Domaine très jeune ({age} jours) → très suspect"
         elif age != -1 and age < 30:
             confidence  = min(confidence + 10, 100)
             age_warning = f"Domaine jeune ({age} jours) → suspect"
+
+        # Ajustement à la baisse si signaux réseau légitimes
+        spf   = features.get("spf_valid",   0)
+        dmarc = features.get("dmarc_valid", 0)
+        ssl   = features.get("ssl_valid",   0)
+        dkim  = features.get("dkim_valid",  0)
+
+        legitimacy_score = spf + dmarc + ssl + dkim  # max = 4
+
+        if legitimacy_score >= 3:
+            confidence = max(confidence - 40, 0)
+        elif legitimacy_score == 2:
+            confidence = max(confidence - 20, 0)
+        elif legitimacy_score == 1:
+            confidence = max(confidence - 8, 0)    # nouveau
 
         final_prediction = 1 if confidence >= 50 else 0
 

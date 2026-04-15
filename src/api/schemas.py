@@ -20,6 +20,7 @@ class EmailAnalysisResponse(BaseModel):
     features: dict
     suspicious_elements: list[str]
     report: str
+    explanation: Optional[dict] = None
 
 
 class URLAnalysisResponse(BaseModel):

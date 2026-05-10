@@ -1,0 +1,19 @@
+From: "DHL Express" <delivery@dhl-express-tracking.ml>
+To: recipient@gmail.com
+Subject: Your DHL package is on hold - Confirm delivery address
+Date: Mon, 14 Apr 2025 10:00:00 +0000
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+
+Dear Customer,
+
+Your DHL package #JD014600006281230 is on hold.
+We could not deliver your package due to incomplete address.
+
+Confirm your delivery address and pay the customs fee immediately:
+http://dhl-express-tracking.ml/confirm?parcel=JD014600006281230&fee=2.99
+
+You have 24 hours to confirm or your package will be returned.
+Click here now to avoid additional charges!!!
+
+DHL Express Customer Service

@@ -1,0 +1,184 @@
+{
+  "date": "2026-05-06T09:07:29.133433",
+  "total": 10,
+  "corrects": 7,
+  "accuracy": 70.0,
+  "precision": 62.5,
+  "recall": 100.0,
+  "f1_score": 76.92,
+  "faux_positifs_pct": 60.0,
+  "temps_moyen_s": 21.19,
+  "matrice_confusion": {
+    "TP": 5,
+    "FP": 3,
+    "FN": 0,
+    "TN": 2
+  },
+  "criteres_pcd": {
+    "BD02_ok": false,
+    "BD03_ok": true,
+    "RNF01_ok": true
+  },
+  "details": [
+    {
+      "nom": "Phishing PayPal urgent",
+      "attendu": "PHISHING",
+      "obtenu": "PHISHING",
+      "correct": true,
+      "confiance": 100.0,
+      "temps_s": 18.92,
+      "suspects": [
+        "Langage urgent détecté dans le corps",
+        "SPF invalide — expéditeur non vérifié",
+        "DKIM invalide — email potentiellement falsifié",
+        "DMARC invalide",
+        "Nom affiché ne correspond pas au domaine réel",
+        "Domaine expéditeur suspect",
+        "Trop de points d'exclamation",
+        "TLD suspect dans l'URL (.tk, .xyz, .ru...)",
+        "TLD suspect dans le domaine expéditeur",
+        "URL sans HTTPS"
+      ]
+    },
+    {
+      "nom": "Phishing Google IP",
+      "attendu": "PHISHING",
+      "obtenu": "PHISHING",
+      "correct": true,
+      "confiance": 100.0,
+      "temps_s": 28.62,
+      "suspects": [
+        "Langage urgent détecté dans le corps",
+        "SPF invalide — expéditeur non vérifié",
+        "DKIM invalide — email potentiellement falsifié",
+        "DMARC invalide",
+        "URL contient une adresse IP",
+        "Nom affiché ne correspond pas au domaine réel",
+        "Domaine expéditeur suspect",
+        "TLD suspect dans le domaine expéditeur",
+        "URL sans HTTPS"
+      ]
+    },
+    {
+      "nom": "Phishing Apple ID",
+      "attendu": "PHISHING",
+      "obtenu": "PHISHING",
+      "correct": true,
+      "confiance": 100.0,
+      "temps_s": 28.77,
+      "suspects": [
+        "SPF invalide — expéditeur non vérifié",
+        "DKIM invalide — email potentiellement falsifié",
+        "DMARC invalide",
+        "URL contient une adresse IP",
+        "Nom affiché ne correspond pas au domaine réel",
+        "Domaine expéditeur suspect",
+        "TLD suspect dans le domaine expéditeur",
+        "URL sans HTTPS"
+      ]
+    },
+    {
+      "nom": "Phishing Netflix",
+      "attendu": "PHISHING",
+      "obtenu": "PHISHING",
+      "correct": true,
+      "confiance": 100.0,
+      "temps_s": 18.92,
+      "suspects": [
+        "Langage urgent détecté dans le corps",
+        "SPF invalide — expéditeur non vérifié",
+        "DKIM invalide — email potentiellement falsifié",
+        "DMARC invalide",
+        "Nom affiché ne correspond pas au domaine réel",
+        "Domaine expéditeur suspect",
+        "Trop de points d'exclamation",
+        "TLD suspect dans l'URL (.tk, .xyz, .ru...)",
+        "TLD suspect dans le domaine expéditeur",
+        "URL sans HTTPS"
+      ]
+    },
+    {
+      "nom": "Phishing banque",
+      "attendu": "PHISHING",
+      "obtenu": "PHISHING",
+      "correct": true,
+      "confiance": 100.0,
+      "temps_s": 19.04,
+      "suspects": [
+        "Langage urgent détecté dans le corps",
+        "SPF invalide — expéditeur non vérifié",
+        "DKIM invalide — email potentiellement falsifié",
+        "DMARC invalide",
+        "Domaine expéditeur suspect",
+        "TLD suspect dans l'URL (.tk, .xyz, .ru...)",
+        "TLD suspect dans le domaine expéditeur",
+        "URL sans HTTPS"
+      ]
+    },
+    {
+      "nom": "Légitime reunion collègue",
+      "attendu": "LÉGITIME",
+      "obtenu": "PHISHING",
+      "correct": false,
+      "confiance": 51.48,
+      "temps_s": 19.2,
+      "suspects": [
+        "SPF invalide — expéditeur non vérifié",
+        "DKIM invalide — email potentiellement falsifié",
+        "DMARC invalide"
+      ]
+    },
+    {
+      "nom": "Légitime RH bulletin salaire",
+      "attendu": "LÉGITIME",
+      "obtenu": "PHISHING",
+      "correct": false,
+      "confiance": 60.489999999999995,
+      "temps_s": 19.06,
+      "suspects": [
+        "SPF invalide — expéditeur non vérifié",
+        "DKIM invalide — email potentiellement falsifié",
+        "DMARC invalide"
+      ]
+    },
+    {
+      "nom": "Légitime informatique maintenance",
+      "attendu": "LÉGITIME",
+      "obtenu": "PHISHING",
+      "correct": false,
+      "confiance": 53.27,
+      "temps_s": 18.91,
+      "suspects": [
+        "SPF invalide — expéditeur non vérifié",
+        "DKIM invalide — email potentiellement falsifié",
+        "DMARC invalide"
+      ]
+    },
+    {
+      "nom": "Légitime invitation conférence",
+      "attendu": "LÉGITIME",
+      "obtenu": "LÉGITIME",
+      "correct": true,
+      "confiance": 26.97,
+      "temps_s": 18.69,
+      "suspects": [
+        "SPF invalide — expéditeur non vérifié",
+        "DKIM invalide — email potentiellement falsifié",
+        "DMARC invalide"
+      ]
+    },
+    {
+      "nom": "Légitime commande e-commerce",
+      "attendu": "LÉGITIME",
+      "obtenu": "LÉGITIME",
+      "correct": true,
+      "confiance": 24.22,
+      "temps_s": 21.8,
+      "suspects": [
+        "SPF invalide — expéditeur non vérifié",
+        "DKIM invalide — email potentiellement falsifié",
+        "DMARC invalide"
+      ]
+    }
+  ]
+}

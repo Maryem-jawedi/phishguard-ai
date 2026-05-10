@@ -1,7 +1,9 @@
+import os
+
 import gradio as gr
 import requests
 
-API_BASE   = "http://127.0.0.1:8000"
+API_BASE = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")
 API_EMAIL  = f"{API_BASE}/api/v1/analyze/email"
 API_URL    = f"{API_BASE}/api/v1/analyze/url"
 API_TOKEN  = f"{API_BASE}/api/v1/auth/token"
@@ -392,7 +394,8 @@ with gr.Blocks(title="PhishGuard AI", css=CSS, theme=gr.themes.Soft()) as app:
 
 if __name__ == "__main__":
     app.launch(
-        server_name="127.0.0.1",
+        server_name="0.0.0.0",   # accessible depuis l'extérieur du conteneur
         server_port=7860,
         show_error=True
     )
+    

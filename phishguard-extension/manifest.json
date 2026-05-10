@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "PhishGuard AI",
+  "version": "1.0.0",
+  "description": "Détection de phishing en temps réel directement dans Gmail",
+
+  "permissions": [
+    "activeTab",
+    "storage",
+    "identity"
+  ],
+
+  "oauth2": {
+    "client_id": "1075194022585-mcqjc095o6fdeoru9vmlifgats6o3nlu.apps.googleusercontent.com",
+    "scopes": ["https://www.googleapis.com/auth/gmail.readonly"]
+  },
+
+  "host_permissions": [
+    "https://mail.google.com/*",
+    "https://localhost:8443/*",
+    "https://www.googleapis.com/*"
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "PhishGuard AI"
+  },
+
+  "icons": {
+    "128": "icons/icon128.png"
+  }
+}

@@ -1,0 +1,44 @@
+# ============================================================
+# .dockerignore — PhishGuard AI
+# Exclut les fichiers inutiles pour réduire la taille de l'image
+# ============================================================
+
+# Environnements Python virtuels
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Caches pytest & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Dataset brut (volumineux, non requis au runtime)
+CEAS_08.csv
+
+# Tests (non nécessaires dans l'image de production)
+tests/
+
+# Fichiers IDE et OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Logs
+*.log
+logs/
+
+# Documentation
+README.md
+*.md

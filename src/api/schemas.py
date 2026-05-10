@@ -12,6 +12,10 @@ class URLAnalysisRequest(BaseModel):
     url: str
 
 
+class ExtensionAnalysisRequest(BaseModel):   # ← NOUVEAU
+    raw_eml: str                             # base64url envoyé par Gmail API
+
+
 # -- Réponses sortantes
 
 class EmailAnalysisResponse(BaseModel):

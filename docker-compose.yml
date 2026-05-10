@@ -1,0 +1,47 @@
+services:
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: phishguard-api
+    restart: unless-stopped
+    ports:
+      - "8443:8443"
+    volumes:
+      - ./certs:/app/certs:ro
+    command: ["uvicorn", "src.api.main:app",
+              "--host", "0.0.0.0",
+              "--port", "8443",
+              "--ssl-keyfile", "/app/certs/localhost-key.pem",
+              "--ssl-certfile", "/app/certs/localhost.pem"]
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request, ssl; ctx=ssl.create_default_context(); ctx.check_hostname=False; ctx.verify_mode=ssl.CERT_NONE; urllib.request.urlopen('https://localhost:8443/health', context=ctx)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - phishguard-net
+
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: phishguard-ui
+    restart: unless-stopped
+    command: ["python", "src/ui/app.py"]
+    ports:
+      - "7860:7860"
+    environment:
+      - API_BASE_URL=https://api:8443
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - phishguard-net
+
+networks:
+  phishguard-net:
+    driver: bridge
